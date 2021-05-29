@@ -1,5 +1,4 @@
-%============================Step 6: Run the task
-%new/old delay task main file
+% New/old delay task main file
 
 % variant: which file to load (1/2/4).
 % 1/2 are recog only. 4 is with src.
@@ -15,10 +14,12 @@
 %
 % eyeLinkMode: 0 no, 1 yes
 %
-%urut may05
-%urut nov06 added src recall
-%urut feb13 v5, has windows 7 TTLs and eye tracker capability.
+% urut may05
+% urut nov06 added src recall
+% urut feb13 v5, has windows 7 TTLs and eye tracker capability.
 %
+% Modifications in current version by: 
+% John A. Thompson & Marielle L. Darwin | May 27 2021
 %===============================
 
 function experimentNEWOLDDELAYv5_MD(variant, blockID, mode, mode2, eyeLinkMode, useCEDRUS)
@@ -26,7 +27,7 @@ if nargin<5
     error('Wrong parameters specified. variant (1,2,4), blockID, mode(100|200), mode2(0/1)');
 end
 if nargin<5
-    eyeLinkMode=0; %eyelink=piece of equipment, not going to use now
+    eyeLinkMode=0; 
 end
 if mode~=100 && mode ~= 200
     error('param error mode1. only 100/200 allowed.');
@@ -37,31 +38,34 @@ end
 MODE_SRC=1;
 Screen('Preference','SkipSyncTests',1); %PTB to skip validating screen
 
-%specify here where the images are stored
-%basepath=['c:\svnwork\consortium\code\psychophysics\stimuli\'];  % images for experiments
-%logDir = 'c:\experiments\logs\'; %where to log info while exp is running
-basepath=('C:\Users\jatne\OneDrive\Documents\Cedars_microwire\code\psychophysics\stimuli\');  % images for experiments
-logDir=('C:\Users\jatne\OneDrive\Documents\Cedars_log\'); %where to log info while exp is running
+% Specify where the images are stored
+%
+% When on lab laptop:
+%basepath=('C:\Users\jatne\OneDrive\Documents\Cedars_microwire\code\psychophysics\stimuli\');  % Images for experiments
+%logDir=('C:\Users\jatne\OneDrive\Documents\Cedars_log\'); % Location to log info while exp is running
+%
+% When on Marielle's laptop:
+basepath=('C:\Users\darwinm\Documents\SVN_Microwire\code\psychophysics\stimuli\');
+logDir=('C:\Users\darwinm\Documents\Thompson Lab\test\');
 
 screenIDToUse=0; %0 main  %%psychtoolbox f(x)
 %screenIDToUse=2;
-screenNumber=max(Screen('Screens')); %screen to display
+screenNumber=max(Screen('Screens')); % Screen to display
 if screenNumber>0
     screenIDToUse=screenNumber;
 end
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-sendTTL_enabled = 1; %%to sync with NLX for timestamps
+sendTTL_enabled = 0; %%to sync with NLX for timestamps
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+setMarkerIDs;   % Set constants
 
-setMarkerIDs;   %set constants
-
-STIM_WAIT_TIME = 1.0;   % how long is the stimulus displayed [in sec]. Default is 1s
+STIM_WAIT_TIME = 1.0;   % How long is the stimulus displayed [in sec]. Default is 1s
 
 if useCEDRUS
-    %initialize CEDRUS keypad.
+    % Initialize CEDRUS keypad.
     try
         handle=initCEDRUS;
     catch
@@ -78,7 +82,7 @@ sansSerifFont = 'Arial';
 black = BlackIndex(screenNumber);
 white=[255 255 255];
 [window, ~] = PsychImaging('OpenWindow', screenNumber, black);     %From BasicTextDemo.m
-% load files
+% Load files
 switch (variant)
     case 1
         load('newOldDelayStimuli.mat');
@@ -124,8 +128,8 @@ switch (variant)
         error('unkown variant');
 end
 
-%verify file is correct
-if mode2>=MODE_SRC  %with SRC
+% Verify file is correct
+if mode2>=MODE_SRC  % with SRC
     if mode==MODE_LEARN
         if length( experimentStimuli(blockID).stimuliLearn ) ~= length( experimentStimuli(blockID).recallPos )
             error('src mode requested but src info not available (learn)');
@@ -138,9 +142,9 @@ if mode2>=MODE_SRC  %with SRC
     end
 end
 
-CATEGORYNR_ANIMAL=5; %which category is the animal category
+CATEGORYNR_ANIMAL=5; % Which category is the animal category
 
-%for training,other category is animal
+% For training,other category is animal
 if blockID==50 || blockID==51
     CATEGORYNR_ANIMAL=6;
 end
@@ -182,13 +186,13 @@ else
 end
 
 if sendTTL_enabled
-    %     config_io; %setup parallel port
-    % DatapixxAOttl() %FOR TTL
+    %config_io; %setup parallel port
+    %DatapixxAOttl() %FOR TTL
 else
     warning('send TTLs disabled');
 end
 
-%setup eye tracker
+% Setup eye tracker
 if eyeLinkMode
     dummymode=0;       % set to 1 to initialize in dummymode
     edffilename=['NO' timestampStr(end-5:end)];
@@ -210,14 +214,14 @@ if eyeLinkMode
     end
 end
 
-%==== display instructions screen and decide which question screens to use during the experiment
+%==== Display instructions screen and decide which question screens to use during the experiment
 text=[];
 if mode==MODE_LEARN
     if mode2 >= MODE_SRC
-        if mode2==1 %spatial
+        if mode2==1 % Spatial
             experimentNEWOLDDELAY_screens(2, window, basepath,till);
             modeToUse_QScreen1 = 8;
-        else %color
+        else % Color
             experimentNEWOLDDELAY_screens(3, window, basepath,till);
             modeToUse_QScreen1 = 9;
         end
@@ -227,41 +231,41 @@ if mode==MODE_LEARN
     end
     
 else
-    modeToUse_QScreen1 = 11;  %new/old question with confidence
+    modeToUse_QScreen1 = 11;  % New/old question with confidence
     if mode2 >= MODE_SRC
         if mode2==1
-            %recog with recall spatial
+            % Recog with recall spatial
             experimentNEWOLDDELAY_screens(5, window, basepath,till);
             modeToUse_QScreen2 = 12;
         else
-            %recog with recall color
+            % Recog with recall color
             experimentNEWOLDDELAY_screens(6, window, basepath,till);
             modeToUse_QScreen2 = 13;
         end
     else
-        %recog, no recall
+        % Recog, no recall
         experimentNEWOLDDELAY_screens(7, window, basepath,till);
         
-        modeToUse_QScreen2 = -1; %na
+        modeToUse_QScreen2 = -1; % na
     end
 end
 
-Screen('Flip',window);  %display the instructions
+Screen('Flip',window);  % Display the instructions
 HideCursor;
 
-%=== button press after instruction screen
+%=== Button press after instruction screen
 if useCEDRUS
     waitForKeypressCedrus(handle, [6 7 8]);
 else
     waitForKeypressPTB();
 end
 
-%-------------------start (start recording here)
+%-------------------Start (start recording here)
 
-%training
+% Training
 if sendTTL_enabled
-    %     sendTTL(EXPERIMENT_ON_REAL);
-    DatapixxAOttl() %FOR TTL
+    %sendTTL(EXPERIMENT_ON_REAL);
+    DatapixxAOttl() % FOR TTL
     writeLog_withEyelink(fidLog, EXPERIMENT_ON_REAL,'', eyeLinkMode);
 end
 
@@ -270,14 +274,14 @@ countCorrectNew=0;
 countCorrectLearn=0;
 countCorrectRecall=0;
 
-%== display fixation cross screen
+%== Display fixation cross screen
 experimentNEWOLDDELAY_screens(MODE_BLANK, window, basepath,till);
 plotCross_PTB3(window);
 Screen('Flip',window);
 WaitSecs(1.0)
 
 
-%now do experiment
+% Now do experiment
 for i=1:till
     inputemu({'key_normal','H\BACKSPACE'}'); % Simulating keyboard input to prevent win going to sleep
     HideCursor;
@@ -286,7 +290,7 @@ for i=1:till
         Eyelink('command', ['record_status_message "TRIAL ' num2str(i) ' of ' num2str(till) '"']);
     end
     
-    %    Screen('CopyWindow',w(i),window);
+    %Screen('CopyWindow',w(i),window);
     experimentNEWOLDDELAY_screens(MODE_BLANK, window, basepath,till);
     
     fnameToLoad = fileMapping{stimuliToLoad(i)};
@@ -298,12 +302,12 @@ for i=1:till
     posImg=[];
     if mode2>=MODE_SRC && mode==MODE_LEARN
         
-        if mode2==1 %spatial
+        if mode2==1 % Spatial
             posImg =posImgHoriz(img, recallPos(i));
-            %draw middle line
-            Screen('DrawLine', window,white, 512, 0, 512, 768, 1); %vertical
+            % Draw middle line
+            Screen('DrawLine', window,white, 512, 0, 512, 768, 1); % Vertical
         else
-            %color
+            % Color
             posImg = centerImg(img);
             posColor=posImg;
             posColor(1) = posColor(1)-100;
@@ -312,25 +316,25 @@ for i=1:till
             posColor(4) = posColor(4)+100;
             
             if recallPos(i)==1
-                %Screen('FillRect',window,[0 0 1]*255 ); %blue
-                Screen('FillRect',window,[0 1 0]*255, posColor  ); %green
+                %Screen('FillRect',window,[0 0 1]*255 ); % Blue
+                Screen('FillRect',window,[0 1 0]*255, posColor  ); % Green
             end
             
             if recallPos(i)==2
-                %Screen('FillRect',window, [1 1 1]*255 ); %white
-                Screen('FillRect',window, [1 0 0]*180, posColor ); %red
+                %Screen('FillRect',window, [1 1 1]*255 ); % White
+                Screen('FillRect',window, [1 0 0]*180, posColor ); % Red
             end
         end
     else
         posImg = centerImg(img);
     end
     
-    %--- show the image
+    %--- Show the image
     Screen('PutImage', window, img, posImg );
     Screen('Flip', window);
     if sendTTL_enabled
-        %         sendTTL(STIMULUS_ON);
-        DatapixxAOttl() %FOR TTL
+        %sendTTL(STIMULUS_ON);
+        DatapixxAOttl() % FOR TTL
         writeLog_withEyelink(fidLog, STIMULUS_ON,'', eyeLinkMode);
     end
     if eyeLinkMode
@@ -343,8 +347,8 @@ for i=1:till
     Screen('Flip', window);
     
     if sendTTL_enabled
-        %         sendTTL(STIMULUS_OFF);
-        DatapixxAOttl() %FOR TTL
+        %sendTTL(STIMULUS_OFF);
+        DatapixxAOttl() % FOR TTL
         writeLog_withEyelink(fidLog, STIMULUS_OFF,'', eyeLinkMode);
     end
     
@@ -353,15 +357,15 @@ for i=1:till
     Screen('Flip', window);
     
     if sendTTL_enabled
-        %         sendTTL(DELAY1_OFF);
-        DatapixxAOttl() %FOR TTL
+        %sendTTL(DELAY1_OFF);
+        DatapixxAOttl() % FOR TTL
         writeLog_withEyelink(fidLog, DELAY1_OFF,'', eyeLinkMode);
     end
     
     emptyKeyboardBuffer;
     
     if mode==MODE_LEARN
-        if useCEDRUS,
+        if useCEDRUS
             CedrusResponseBox('FlushEvents', handle);
         else
             emptyKeyboardBuffer;
@@ -370,16 +374,16 @@ for i=1:till
         if useCEDRUS
             
             if mode2>=MODE_SRC
-                [RT(i), buttonPressed] = waitForKeypressCedrus(handle, [4 5]);   % color box (green,red)
+                [RT(i), buttonPressed] = waitForKeypressCedrus(handle, [4 5]);   % Color box (green,red)
                 
             else
-                [RT(i), buttonPressed] = waitForKeypressCedrus(handle, [4 5]);   % Yes or no Box
+                [RT(i), buttonPressed] = waitForKeypressCedrus(handle, [4 5]);   % Yes or no box
             end
             
             if buttonPressed==4
-                char='a';  %Yes
+                char='a';  % Yes
             else
-                char=';';  %No
+                char=';';  % No
             end
         else
             
@@ -398,8 +402,8 @@ for i=1:till
         %disp(['pressed: #' char '#' ]);
         if char=='a' | char=='q' | char=='A' | char=='Q'
             if sendTTL_enabled
-                DatapixxAOttl() %FOR TTL
-                %                 sendTTL(RESPONSE_LEARNING_ANIMAL);
+                DatapixxAOttl() % FOR TTL
+                %sendTTL(RESPONSE_LEARNING_ANIMAL);
                 writeLog_withEyelink(fidLog, RESPONSE_LEARNING_ANIMAL,'', eyeLinkMode);
             end
             
@@ -415,8 +419,8 @@ for i=1:till
         end
         if char==';' | char=='p' | char==':' | char=='P'
             if sendTTL_enabled
-                %                 sendTTL(RESPONSE_LEARNING_NONANIMAL);
-                DatapixxAOttl() %FOR TTL
+                %sendTTL(RESPONSE_LEARNING_NONANIMAL);
+                DatapixxAOttl() % FOR TTL
                 writeLog_withEyelink(fidLog, RESPONSE_LEARNING_NONANIMAL,'', eyeLinkMode);
             end
             
@@ -425,7 +429,7 @@ for i=1:till
                     countCorrectLearn=countCorrectLearn+1;
                 end
             else
-                if ( categoryMapping(stimuliToLoad(i),2) ) ~= CATEGORYNR_ANIMAL  %if is animal
+                if ( categoryMapping(stimuliToLoad(i),2) ) ~= CATEGORYNR_ANIMAL  % If is animal
                     countCorrectLearn=countCorrectLearn+1;
                 end
             end
@@ -435,7 +439,7 @@ for i=1:till
     if mode==MODE_RECOG
         
         
-        if useCEDRUS,
+        if useCEDRUS
             CedrusResponseBox('FlushEvents', handle);
         else
             emptyKeyboardBuffer;
@@ -468,8 +472,8 @@ for i=1:till
             countCorrectNew=countCorrectNew+1;
         end
         
-        %if recall mode, also ask for a confidence judgment on the source
-        %(if answer was OLD)
+        % If recall mode, also ask for a confidence judgment on the source
+        % (If answer was OLD)
         if mode2>=MODE_SRC &  respType==1
             
             experimentNEWOLDDELAY_screens(MODE_BLANK, window, basepath,till);
@@ -484,21 +488,21 @@ for i=1:till
             writeLog_withEyelink(fidLog, DELAY2_OFF,'', eyeLinkMode);
             %===
             
-            if useCEDRUS,
+            if useCEDRUS
                 CedrusResponseBox('FlushEvents', handle);
             else
                 emptyKeyboardBuffer;
             end
             
             if useCEDRUS
-                [RT(i), buttonPressed] = waitForKeypressCedrus(handle, [2 3 4 5 6 7]);  % confidence box, shifted by one
+                [RT(i), buttonPressed] = waitForKeypressCedrus(handle, [2 3 4 5 6 7]);  % Confidence box, shifted by one
                 
                 char=num2str(buttonPressed-1);
                 
                 %if buttonPressed==4
-                %    char='a';  %Yes
+                %    char='a';  % Yes
                 %else
-                %    char=';';  %No
+                %    char=';';  % No
                 %end
             else
                 
@@ -534,58 +538,62 @@ for i=1:till
     
     WaitSecs(1.0)
     if sendTTL_enabled
-        %         sendTTL(DELAY2_OFF);
-        DatapixxAOttl() %FOR TTL
+        %sendTTL(DELAY2_OFF);
+        DatapixxAOttl() % FOR TTL
     end
     writeLog_withEyelink(fidLog, DELAY2_OFF,'', eyeLinkMode);
 end
 
 if sendTTL_enabled
-    %     sendTTL(EXPERIMENT_OFF);
-    DatapixxAOttl() %FOR TTL
+    %sendTTL(EXPERIMENT_OFF);
+    DatapixxAOttl() % FOR TTL
 end
 writeLog_withEyelink(fidLog, EXPERIMENT_OFF,'',eyeLinkMode);
 
-%display result
+% Display result
 text=[];
-text{1}='Thank you!! Your performance was :';
-text{2}='';
-if mode==MODE_LEARN
-    text{3}=[' =>> Number of images correctly identified  ' num2str(countCorrectLearn) ' ( ' num2str(((countCorrectLearn)*100)/till,3) '% )'];
-    text{4}='';
-    text{5}='';
-    text{6}='';
-    text{7}='';
-    text{8}='';
-    text{9}='';
-    text{10}='Please tell experimenter that you are finished.';
-end
-if mode==MODE_RECOG
-    text{3}=[' =>> Number of images correctly identified  ' num2str(countCorrectOld+countCorrectNew) ' ( ' num2str(((countCorrectOld+countCorrectNew)*100)/till,3) '% )'];
-    text{4}='';
-    text{5}=['Number of images correctly identified as OLD ' num2str(countCorrectOld)];
-    text{6}=['Number of images correctly identified as NEW ' num2str(countCorrectNew)];
-    
-    if mode2>=MODE_SRC
-        text{7}=['Number of OLD pictures position/color correctly remembered:  ' num2str(countCorrectRecall) ' of ' num2str(countCorrectOld)];
-    else
+if blockID==51 % Practice blocks
+    text{1}='Thank you! Your performance was :';
+    text{2}='';
+    if mode==MODE_LEARN
+        text{3}=[' =>> Number of images correctly identified  ' num2str(countCorrectLearn) ' ( ' num2str(((countCorrectLearn)*100)/till,3) '% )'];
+        text{4}='';
+        text{5}='';
+        text{6}='';
         text{7}='';
+        text{8}='';
+        text{9}='';
+        text{10}='Please tell experimenter that you are finished.';
     end
-    
-    text{8}='';
-    text{9}='';
-    text{10}='Please tell the experimenter that you are finished.';
+    if mode==MODE_RECOG
+        text{3}=[' =>> Number of images correctly identified  ' num2str(countCorrectOld+countCorrectNew) ' ( ' num2str(((countCorrectOld+countCorrectNew)*100)/till,3) '% )'];
+        text{4}='';
+        text{5}=['Number of images correctly identified as OLD ' num2str(countCorrectOld)];
+        text{6}=['Number of images correctly identified as NEW ' num2str(countCorrectNew)];
+        
+        if mode2>=MODE_SRC
+            text{7}=['Number of OLD pictures position/color correctly remembered:  ' num2str(countCorrectRecall) ' of ' num2str(countCorrectOld)];
+        else
+            text{7}='';
+        end
+        
+        text{8}='';
+        text{9}='';
+        text{10}='Please tell the experimenter that you are finished.';
+    end
+else % Non-practice blocks
+    text{1}='Thank you! Please tell the researcher that you are finished.';
 end
 
 %displayInstructions(window, text, black, white);
 %window=placeFinishedIcon(basepath,window);
 
-%=display feedback screen
+%=Display feedback screen
 experimentNEWOLDDELAY_screens(MODE_FREETEXT, window, basepath,text);
 Screen('Flip', window);
 
 emptyKeyboardBuffer;
-% == wait for keypress to erase results screen
+% == Wait for keypress to erase results screen
 if useCEDRUS
     waitForKeypressCedrus(handle, [6 7 8]);
 else
@@ -599,7 +607,7 @@ end
 
 terminateExperiment(window,fidLog,eyeLinkMode);
 
-%====== internal functions
+%====== Internal functions
 
 
 function terminateExperiment(window,fidLog,eyeLinkMode)
@@ -615,62 +623,62 @@ end
 
 closeScreens(window);
 fclose(fidLog);
-clear Snd;  % eyelink toolbox opens sound.
+clear Snd;  % Eyelink toolbox opens sound
 
 %
-%get the confidence rating and add log entry/send TTL for it
+% Get the confidence rating and add log entry/send TTL for it
 %
 function [respType] = getConfidence(fidLog, char, eyeLinkMode, sendTTL_enabled)
 setMarkerIDs;
 
-respType=1; %OLD
+respType=1; % OLD
 if char=='/' || char=='6'
     if sendTTL_enabled
-        %         sendTTL(RESPONSE_6);
-        DatapixxAOttl() %FOR TTL
+        %sendTTL(RESPONSE_6);
+        DatapixxAOttl() % FOR TTL
         writeLog_withEyelink(fidLog, RESPONSE_6,'',eyeLinkMode);
     end
 end
 
 if char=='5'
     if sendTTL_enabled
-        %         sendTTL(RESPONSE_5);
-        DatapixxAOttl() %FOR TTL
+        %sendTTL(RESPONSE_5);
+        DatapixxAOttl() % FOR TTL
         writeLog_withEyelink(fidLog, RESPONSE_5,'',eyeLinkMode);
     end
 end
 
 if char=='4'
     if sendTTL_enabled
-        %         sendTTL(RESPONSE_4);
-        DatapixxAOttl() %FOR TTL
+        %sendTTL(RESPONSE_4);
+        DatapixxAOttl() % FOR TTL
         writeLog_withEyelink(fidLog, RESPONSE_4,'',eyeLinkMode);
     end
 end
 
 if char=='3'
     if sendTTL_enabled
-        %         sendTTL(RESPONSE_3);
-        DatapixxAOttl() %FOR TTL
+        %sendTTL(RESPONSE_3);
+        DatapixxAOttl() % FOR TTL
         writeLog_withEyelink(fidLog, RESPONSE_3,'',eyeLinkMode);
     end
-    respType=0; %NEW
+    respType=0; % NEW
 end
 
 if char=='2'
     if sendTTL_enabled
-        %         sendTTL(RESPONSE_2);
-        DatapixxAOttl() %FOR TTL
+        %sendTTL(RESPONSE_2);
+        DatapixxAOttl() % FOR TTL
         writeLog_withEyelink(fidLog, RESPONSE_2,'',eyeLinkMode);
     end
-    respType=0; %NEW
+    respType=0; % NEW
 end
 
 if char=='1' || char=='z'
     if sendTTL_enabled
-        %         sendTTL(RESPONSE_1);
-        DatapixxAOttl() %FOR TTL
+        %sendTTL(RESPONSE_1);
+        DatapixxAOttl() % FOR TTL
         writeLog_withEyelink(fidLog, RESPONSE_1,'',eyeLinkMode);
     end
-    respType=0; %NEW
+    respType=0; % NEW
 end
