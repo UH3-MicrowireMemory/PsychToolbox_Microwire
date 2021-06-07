@@ -613,36 +613,6 @@ if blockID==51 % Practice blocks
 else % Non-practice blocks
     text{1}='Thank you! Please tell the researcher that you are finished.';
 end
-% %display result
-% text=[];
-% text{1}='Thank you!! Your performance was :';
-% text{2}='';
-% if mode==MODE_LEARN
-%     text{3}=[' =>> Number of images correctly identified  ' num2str(countCorrectLearn) ' ( ' num2str(((countCorrectLearn)*100)/till,3) '% )'];
-%     text{4}='';
-%     text{5}='';
-%     text{6}='';
-%     text{7}='';
-%     text{8}='';
-%     text{9}='';
-%     text{10}='Please tell experimenter that you are finished.';
-% end
-% if mode==MODE_RECOG
-%     text{3}=[' =>> Number of images correctly identified  ' num2str(countCorrectOld+countCorrectNew) ' ( ' num2str(((countCorrectOld+countCorrectNew)*100)/till,3) '% )'];
-%     text{4}='';
-%     text{5}=['Number of images correctly identified as OLD ' num2str(countCorrectOld)];
-%     text{6}=['Number of images correctly identified as NEW ' num2str(countCorrectNew)];
-%     
-%     if mode2>=MODE_SRC
-%         text{7}=['Number of OLD pictures position/color correctly remembered:  ' num2str(countCorrectRecall) ' of ' num2str(countCorrectOld)];
-%     else
-%         text{7}='';
-%     end
-%     
-%     text{8}='';
-%     text{9}='';
-%     text{10}='Please tell the experimenter that you are finished.';
-% end
 
 %displayInstructions(window, text, black, white);
 %window=placeFinishedIcon(basepath,window);
