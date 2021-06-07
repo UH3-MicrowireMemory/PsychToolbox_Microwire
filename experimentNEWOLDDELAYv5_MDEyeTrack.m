@@ -19,6 +19,8 @@
 %urut nov06 added src recall
 %urut feb13 v5, has windows 7 TTLs and eye tracker capability.
 %
+% Modifications in current version by: 
+% John A. Thompson & Marielle L. Darwin | June 7 2021
 %===============================
 
 function experimentNEWOLDDELAYv5_MDEyeTrack(variant, blockID, mode, mode2, eyeLinkMode, useCEDRUS)
@@ -26,7 +28,7 @@ if nargin<5
     error('Wrong parameters specified. variant (1,2,4), blockID, mode(100|200), mode2(0/1)');
 end
 if nargin<5
-    eyeLinkMode=0; %eyelink=piece of equipment, not going to use now
+    eyeLinkMode=0; 
 end
 if mode~=100 && mode ~= 200
     error('param error mode1. only 100/200 allowed.');
@@ -78,6 +80,8 @@ sansSerifFont = 'Arial';
 black = BlackIndex(screenNumber);
 white=[255 255 255];
 [window, ~] = PsychImaging('OpenWindow', screenNumber, black);     %From BasicTextDemo.m
+
+
 % load files
 switch (variant)
     case 1
@@ -184,6 +188,10 @@ end
 if sendTTL_enabled
     %     config_io; %setup parallel port
     % DatapixxAOttl() %FOR TTL
+    % EyeLink 1000 Plus
+    EyelinkInit(0);
+    Eyelink('Command', 'write_ioport 0x8 0xFF');
+    Eyelink('Command', 'write_ioport 0x8 0x0');
 else
     warning('send TTLs disabled');
 end
@@ -261,8 +269,12 @@ end
 %training
 if sendTTL_enabled
     %     sendTTL(EXPERIMENT_ON_REAL);
-%     DatapixxAOttl() %FOR TTL              
-    writeLog_withEyelink(fidLog, EXPERIMENT_ON_REAL,'', eyeLinkMode);
+    %     DatapixxAOttl() %FOR TTL
+    % EyeLink 1000 Plus
+    Eyelink('Command', 'write_ioport 0x8 0xFF');
+    Eyelink('Command', 'write_ioport 0x8 0x0');
+    %     writeLog_withEyelink(fidLog, EXPERIMENT_ON_REAL,'', eyeLinkMode);
+    
 end
 
 countCorrectOld=0;
@@ -330,7 +342,10 @@ for i=1:till
     Screen('Flip', window);
     if sendTTL_enabled
         %         sendTTL(STIMULUS_ON);
-%         DatapixxAOttl() %FOR TTL
+        %         DatapixxAOttl() %FOR TTL
+        % EyeLink 1000 Plus
+        Eyelink('Command', 'write_ioport 0x8 0xFF');
+        Eyelink('Command', 'write_ioport 0x8 0x0');
         writeLog_withEyelink(fidLog, STIMULUS_ON,'', eyeLinkMode);
     end
     if eyeLinkMode
@@ -344,7 +359,10 @@ for i=1:till
     
     if sendTTL_enabled
         %         sendTTL(STIMULUS_OFF);
-%         DatapixxAOttl() %FOR TTL
+        %         DatapixxAOttl() %FOR TTL
+        % EyeLink 1000 Plus
+        Eyelink('Command', 'write_ioport 0x8 0xFF');
+        Eyelink('Command', 'write_ioport 0x8 0x0');
         writeLog_withEyelink(fidLog, STIMULUS_OFF,'', eyeLinkMode);
     end
     
@@ -354,7 +372,10 @@ for i=1:till
     
     if sendTTL_enabled
         %         sendTTL(DELAY1_OFF);
-%         DatapixxAOttl() %FOR TTL
+        %         DatapixxAOttl() %FOR TTL
+        % EyeLink 1000 Plus
+        Eyelink('Command', 'write_ioport 0x8 0xFF');
+        Eyelink('Command', 'write_ioport 0x8 0x0');
         writeLog_withEyelink(fidLog, DELAY1_OFF,'', eyeLinkMode);
     end
     
@@ -398,8 +419,11 @@ for i=1:till
         %disp(['pressed: #' char '#' ]);
         if char=='a' | char=='q' | char=='A' | char=='Q'
             if sendTTL_enabled
-%                 DatapixxAOttl() %FOR TTL
+                %                 DatapixxAOttl() %FOR TTL
                 %                 sendTTL(RESPONSE_LEARNING_ANIMAL);
+                % EyeLink 1000 Plus
+                Eyelink('Command', 'write_ioport 0x8 0xFF');
+                Eyelink('Command', 'write_ioport 0x8 0x0');
                 writeLog_withEyelink(fidLog, RESPONSE_LEARNING_ANIMAL,'', eyeLinkMode);
             end
             
@@ -416,7 +440,10 @@ for i=1:till
         if char==';' | char=='p' | char==':' | char=='P'
             if sendTTL_enabled
                 %                 sendTTL(RESPONSE_LEARNING_NONANIMAL);
-%                 DatapixxAOttl() %FOR TTL
+                %                 DatapixxAOttl() %FOR TTL
+                % EyeLink 1000 Plus
+                Eyelink('Command', 'write_ioport 0x8 0xFF');
+                Eyelink('Command', 'write_ioport 0x8 0x0');
                 writeLog_withEyelink(fidLog, RESPONSE_LEARNING_NONANIMAL,'', eyeLinkMode);
             end
             
@@ -535,47 +562,87 @@ for i=1:till
     WaitSecs(1.0)
     if sendTTL_enabled
         %         sendTTL(DELAY2_OFF);
-%         DatapixxAOttl() %FOR TTL
+        %         DatapixxAOttl() %FOR TTL
+        % EyeLink 1000 Plus
+        Eyelink('Command', 'write_ioport 0x8 0xFF');
+        Eyelink('Command', 'write_ioport 0x8 0x0');
     end
     writeLog_withEyelink(fidLog, DELAY2_OFF,'', eyeLinkMode);
 end
 
 if sendTTL_enabled
     %     sendTTL(EXPERIMENT_OFF);
-%     DatapixxAOttl() %FOR TTL
+    %     DatapixxAOttl() %FOR TTL
+    % EyeLink 1000 Plus
+    Eyelink('Command', 'write_ioport 0x8 0xFF');
+    Eyelink('Command', 'write_ioport 0x8 0x0');
 end
 writeLog_withEyelink(fidLog, EXPERIMENT_OFF,'',eyeLinkMode);
 
-%display result
+% Display result
 text=[];
-text{1}='Thank you!! Your performance was :';
-text{2}='';
-if mode==MODE_LEARN
-    text{3}=[' =>> Number of images correctly identified  ' num2str(countCorrectLearn) ' ( ' num2str(((countCorrectLearn)*100)/till,3) '% )'];
-    text{4}='';
-    text{5}='';
-    text{6}='';
-    text{7}='';
-    text{8}='';
-    text{9}='';
-    text{10}='Please tell experimenter that you are finished.';
-end
-if mode==MODE_RECOG
-    text{3}=[' =>> Number of images correctly identified  ' num2str(countCorrectOld+countCorrectNew) ' ( ' num2str(((countCorrectOld+countCorrectNew)*100)/till,3) '% )'];
-    text{4}='';
-    text{5}=['Number of images correctly identified as OLD ' num2str(countCorrectOld)];
-    text{6}=['Number of images correctly identified as NEW ' num2str(countCorrectNew)];
-    
-    if mode2>=MODE_SRC
-        text{7}=['Number of OLD pictures position/color correctly remembered:  ' num2str(countCorrectRecall) ' of ' num2str(countCorrectOld)];
-    else
+if blockID==51 % Practice blocks
+    text{1}='Thank you! Your performance was :';
+    text{2}='';
+    if mode==MODE_LEARN
+        text{3}=[' =>> Number of images correctly identified  ' num2str(countCorrectLearn) ' ( ' num2str(((countCorrectLearn)*100)/till,3) '% )'];
+        text{4}='';
+        text{5}='';
+        text{6}='';
         text{7}='';
+        text{8}='';
+        text{9}='';
+        text{10}='Please tell experimenter that you are finished.';
     end
-    
-    text{8}='';
-    text{9}='';
-    text{10}='Please tell the experimenter that you are finished.';
+    if mode==MODE_RECOG
+        text{3}=[' =>> Number of images correctly identified  ' num2str(countCorrectOld+countCorrectNew) ' ( ' num2str(((countCorrectOld+countCorrectNew)*100)/till,3) '% )'];
+        text{4}='';
+        text{5}=['Number of images correctly identified as OLD ' num2str(countCorrectOld)];
+        text{6}=['Number of images correctly identified as NEW ' num2str(countCorrectNew)];
+        
+        if mode2>=MODE_SRC
+            text{7}=['Number of OLD pictures position/color correctly remembered:  ' num2str(countCorrectRecall) ' of ' num2str(countCorrectOld)];
+        else
+            text{7}='';
+        end
+        
+        text{8}='';
+        text{9}='';
+        text{10}='Please tell the experimenter that you are finished.';
+    end
+else % Non-practice blocks
+    text{1}='Thank you! Please tell the researcher that you are finished.';
 end
+% %display result
+% text=[];
+% text{1}='Thank you!! Your performance was :';
+% text{2}='';
+% if mode==MODE_LEARN
+%     text{3}=[' =>> Number of images correctly identified  ' num2str(countCorrectLearn) ' ( ' num2str(((countCorrectLearn)*100)/till,3) '% )'];
+%     text{4}='';
+%     text{5}='';
+%     text{6}='';
+%     text{7}='';
+%     text{8}='';
+%     text{9}='';
+%     text{10}='Please tell experimenter that you are finished.';
+% end
+% if mode==MODE_RECOG
+%     text{3}=[' =>> Number of images correctly identified  ' num2str(countCorrectOld+countCorrectNew) ' ( ' num2str(((countCorrectOld+countCorrectNew)*100)/till,3) '% )'];
+%     text{4}='';
+%     text{5}=['Number of images correctly identified as OLD ' num2str(countCorrectOld)];
+%     text{6}=['Number of images correctly identified as NEW ' num2str(countCorrectNew)];
+%     
+%     if mode2>=MODE_SRC
+%         text{7}=['Number of OLD pictures position/color correctly remembered:  ' num2str(countCorrectRecall) ' of ' num2str(countCorrectOld)];
+%     else
+%         text{7}='';
+%     end
+%     
+%     text{8}='';
+%     text{9}='';
+%     text{10}='Please tell the experimenter that you are finished.';
+% end
 
 %displayInstructions(window, text, black, white);
 %window=placeFinishedIcon(basepath,window);
@@ -627,7 +694,10 @@ respType=1; %OLD
 if char=='/' || char=='6'
     if sendTTL_enabled
         %         sendTTL(RESPONSE_6);
-%         DatapixxAOttl() %FOR TTL
+        %         DatapixxAOttl() %FOR TTL
+        % EyeLink 1000 Plus
+        Eyelink('Command', 'write_ioport 0x8 0xFF');
+        Eyelink('Command', 'write_ioport 0x8 0x0');
         writeLog_withEyelink(fidLog, RESPONSE_6,'',eyeLinkMode);
     end
 end
@@ -635,7 +705,10 @@ end
 if char=='5'
     if sendTTL_enabled
         %         sendTTL(RESPONSE_5);
-%         DatapixxAOttl() %FOR TTL
+        %         DatapixxAOttl() %FOR TTL
+        % EyeLink 1000 Plus
+        Eyelink('Command', 'write_ioport 0x8 0xFF');
+        Eyelink('Command', 'write_ioport 0x8 0x0');
         writeLog_withEyelink(fidLog, RESPONSE_5,'',eyeLinkMode);
     end
 end
@@ -643,7 +716,10 @@ end
 if char=='4'
     if sendTTL_enabled
         %         sendTTL(RESPONSE_4);
-%         DatapixxAOttl() %FOR TTL
+        %         DatapixxAOttl() %FOR TTL
+        % EyeLink 1000 Plus
+        Eyelink('Command', 'write_ioport 0x8 0xFF');
+        Eyelink('Command', 'write_ioport 0x8 0x0');
         writeLog_withEyelink(fidLog, RESPONSE_4,'',eyeLinkMode);
     end
 end
@@ -651,7 +727,10 @@ end
 if char=='3'
     if sendTTL_enabled
         %         sendTTL(RESPONSE_3);
-%         DatapixxAOttl() %FOR TTL
+        %         DatapixxAOttl() %FOR TTL
+        % EyeLink 1000 Plus
+        Eyelink('Command', 'write_ioport 0x8 0xFF');
+        Eyelink('Command', 'write_ioport 0x8 0x0');
         writeLog_withEyelink(fidLog, RESPONSE_3,'',eyeLinkMode);
     end
     respType=0; %NEW
@@ -660,7 +739,10 @@ end
 if char=='2'
     if sendTTL_enabled
         %         sendTTL(RESPONSE_2);
-%         DatapixxAOttl() %FOR TTL
+        %         DatapixxAOttl() %FOR TTL
+        % EyeLink 1000 Plus
+        Eyelink('Command', 'write_ioport 0x8 0xFF');
+        Eyelink('Command', 'write_ioport 0x8 0x0');
         writeLog_withEyelink(fidLog, RESPONSE_2,'',eyeLinkMode);
     end
     respType=0; %NEW
@@ -669,7 +751,10 @@ end
 if char=='1' || char=='z'
     if sendTTL_enabled
         %         sendTTL(RESPONSE_1);
-%         DatapixxAOttl() %FOR TTL
+        %         DatapixxAOttl() %FOR TTL
+        % EyeLink 1000 Plus
+        Eyelink('Command', 'write_ioport 0x8 0xFF');
+        Eyelink('Command', 'write_ioport 0x8 0x0');
         writeLog_withEyelink(fidLog, RESPONSE_1,'',eyeLinkMode);
     end
     respType=0; %NEW
