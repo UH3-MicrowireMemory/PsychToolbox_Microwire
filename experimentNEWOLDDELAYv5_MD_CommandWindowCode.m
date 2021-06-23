@@ -37,8 +37,8 @@ experimentNEWOLDDELAYv5_MD(1,51,100,0,0,0)    %learn
 experimentNEWOLDDELAYv5_MD(1,51,200,0,0,0)    %recog
 
 %Real (variant 1):
-experimentNEWOLDDELAYv5_MD(1,1,100,0,1,0)     %learn, without eye track
-experimentNEWOLDDELAYv5_MD(1,2,200,0,1,0)     %recog, without eye track 
+experimentNEWOLDDELAYv5_MD(1,1,100,0,0,0)     %learn, without eye track
+experimentNEWOLDDELAYv5_MD(1,2,200,0,0,0)     %recog, without eye track 
 
 %Real (variant 2):
 experimentNEWOLDDELAYv5_MD(2,1,100,0,0,0)     %learn, without eye track
